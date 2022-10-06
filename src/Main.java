@@ -3,7 +3,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 public class Main {
     //1. Crear el tablero con valores aleatorios
@@ -24,70 +26,72 @@ public class Main {
     static int[][] hijo = new int[3][3];
 
     public static void main(String[] args) {
-        padre1 = createTable();
-        padre2 = createTable();
+        List<String> binaryStrings = new ArrayList<>();
+        int counter = 0;
+        for (int i = 0; i < 1000; i++) {
+            padre1 = createTable();
+            if (sumArray(padre1) >= 40 && sumArray(padre1) <= 45) {
+                System.out.println("----------");
+                System.out.println("Array Decimal: " + Arrays.deepToString(padre1));
+                System.out.println("Array Binario: " + Arrays.deepToString(decimalToBinary(padre1)));
+                System.out.println("String Binario: " + arrayToString(decimalToBinary(padre1)));
+                System.out.println("Fitness: " + sumArray(padre1));
+                System.out.println("----------");
 
-        System.out.println(Arrays.deepToString(padre1));
-        System.out.println(Arrays.deepToString(decimalToBinary(padre1)));
-//        System.out.println(Arrays.toString(Arrays.deepToString(decimalToBinary(padre1)).split("")));
-        System.out.println("Fitness: " + fitness(padre1));
-        System.out.println("--------------------------------------------");
-//        System.out.println(Arrays.deepToString(padre2));
-//        System.out.println(Arrays.deepToString(decimalToBinary(padre2)));
-//        System.out.println("Fitness: "+fitness(padre2));
-
+                if(binaryStrings.size()<6){
+//                    binaryStrings.add(arrayToString(decimalToBinary(padre1)));
+                }
+                counter++;
+            }
+        }
+        System.out.println("Las iteraciones totales son: " + counter);
+        System.out.println("Lista: " + binaryStrings.toString());
     }
 
     public static int[][] createTable() {
         int[][] tablero = new int[3][3];
-        long[] numerosAleatorios = LongStream.rangeClosed(1, 9).toArray();
-        //desordenando los elementos
-        Random r = new Random();
-        for (int i = numerosAleatorios.length; i > 0; i--) {
-            int posicion = r.nextInt(i);
-            long tmp = numerosAleatorios[i - 1];
-            numerosAleatorios[i - 1] = numerosAleatorios[posicion];
-            numerosAleatorios[posicion] = tmp;
-        }
+
         for (int i = 0; i < tablero.length; i++) {
-            int[] row = new int[3];
-            if (i == 0) {
-                for (int j = 0; j < 3; j++) {
-                    row[j] = (int) numerosAleatorios[j];
-                }
-            }
+            int gen1 = (int) (Math.random() * 8 + 1);
+            int gen2 = (int) (Math.random() * 8 + 1);
+            int gen3 = (int) (Math.random() * 8 + 1);
 
-            if (i == 1) {
-                for (int j = 0; j < 3; j++) {
-                    row[j] = (int) numerosAleatorios[j + 3];
-                }
-            }
-
-            if (i == 2) {
-                for (int j = 0; j < 3; j++) {
-                    row[j] = (int) numerosAleatorios[j + 6];
-                }
-            }
-            tablero[i] = row;
+            tablero[i] = new int[]{gen1, gen2, gen3};
         }
         return tablero;
-    }
 
-    public static int fitness(int[][] cuadrado) {
-        int fitness = 0;
-        //comparar filas
-        if (cuadrado[0][0] + cuadrado[0][1] + cuadrado[0][2] == 15) fitness++;
-        if (cuadrado[1][0] + cuadrado[1][1] + cuadrado[1][2] == 15) fitness++;
-        if (cuadrado[2][0] + cuadrado[2][1] + cuadrado[2][2] == 15) fitness++;
-        //comparar columnas
-        if (cuadrado[0][0] + cuadrado[1][0] + cuadrado[2][0] == 15) fitness++;
-        if (cuadrado[0][1] + cuadrado[1][1] + cuadrado[2][1] == 15) fitness++;
-        if (cuadrado[0][2] + cuadrado[1][2] + cuadrado[2][2] == 15) fitness++;
-        //comparando diagonales
-        if (cuadrado[0][1] + cuadrado[1][1] + cuadrado[2][2] == 15) fitness++;
-        if (cuadrado[0][2] + cuadrado[1][1] + cuadrado[2][0] == 15) fitness++;
-
-        return fitness;
+//        int[][] tablero = new int[3][3];
+//        long[] numerosAleatorios = LongStream.rangeClosed(1, 9).toArray();
+//        //desordenando los elementos
+//        Random r = new Random();
+//        for (int i = numerosAleatorios.length; i > 0; i--) {
+//            int posicion = r.nextInt(i);
+//            long tmp = numerosAleatorios[i - 1];
+//            numerosAleatorios[i - 1] = numerosAleatorios[posicion];
+//            numerosAleatorios[posicion] = tmp;
+//        }
+//        for (int i = 0; i < tablero.length; i++) {
+//            int[] row = new int[3];
+//            if (i == 0) {
+//                for (int j = 0; j < 3; j++) {
+//                    row[j] = (int) numerosAleatorios[j];
+//                }
+//            }
+//
+//            if (i == 1) {
+//                for (int j = 0; j < 3; j++) {
+//                    row[j] = (int) numerosAleatorios[j + 3];
+//                }
+//            }
+//
+//            if (i == 2) {
+//                for (int j = 0; j < 3; j++) {
+//                    row[j] = (int) numerosAleatorios[j + 6];
+//                }
+//            }
+//            tablero[i] = row;
+//        }
+//        return tablero;
     }
 
     public static String[][] decimalToBinary(int[][] number) {
@@ -106,17 +110,29 @@ public class Main {
                 }
             }
         }
-
-        for (int i = 0; i < binaries.length; i++) {
-            System.out.println("a");
-            for (int j = 0; j < binaries.length; j++) {
-                String[] numbersplit = Arrays.toString(binaries[i][j].split("1")).split("0");
-                for(String string : numbersplit) {
-                    System.out.println(string);
-                }
-            }
-        }
         return binaries;
     }
 
+    static int sumArray(int[][] array) {
+        int sum = 0;
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                sum += array[i][j];
+            }
+        }
+        return sum;
+    }
+
+    public static String arrayToString(String[][] a) {
+        String returnString = "";
+        int column;
+        int row;
+
+        for (row = 0; row < a.length; row++) {
+            for (column = 0; column < a[0].length; column++) {
+                returnString = returnString + "" + a[row][column];
+            }
+        }
+        return returnString;
+    }
 }
